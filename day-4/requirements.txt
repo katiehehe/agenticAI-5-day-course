@@ -1,0 +1,25 @@
+# ==============================================================================
+# Python Dependencies for Day 4: Multi-Agent Coordination
+# ==============================================================================
+
+# Core CrewAI with tools
+crewai[tools]>=0.86.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# HTTP requests for A2A communication
+requests>=2.31.0
+httpx>=0.26.0
+
+# FastAPI (if exposing your own A2A endpoint)
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+
+# Data handling
+pydantic>=2.5.0
+
+# Optional: Async support
+# asyncio
+# aiohttp>=3.9.0
+

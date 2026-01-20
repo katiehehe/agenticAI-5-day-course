@@ -1,0 +1,32 @@
+# ==============================================================================
+# Environment Variables - Day 2: Memory + MCP Tools
+# ==============================================================================
+# 
+# STUDENTS: Copy this to .env and add your real API keys
+# Command: cp env_example.txt .env
+# ==============================================================================
+
+# OpenAI API Key (required)
+OPENAI_API_KEY=your-api-key-here
+
+# Spotify API (if using Spotify MCP tool)
+# Get credentials at: https://developer.spotify.com/dashboard
+SPOTIFY_CLIENT_ID=your-spotify-client-id
+SPOTIFY_CLIENT_SECRET=your-spotify-client-secret
+
+# Web Search API (if using web search tools)
+# Brave Search: https://brave.com/search/api/
+BRAVE_API_KEY=your-brave-api-key
+
+# OpenWeatherMap (if using weather tools)
+# Get key at: https://openweathermap.org/api
+OPENWEATHER_API_KEY=your-weather-api-key
+
+# GitHub (if using GitHub tools)
+# Generate at: https://github.com/settings/tokens
+GITHUB_TOKEN=your-github-token
+
+# Memory Configuration (optional)
+# MEMORY_PROVIDER=local
+# MEMORY_STORAGE_PATH=./memory_storage
+

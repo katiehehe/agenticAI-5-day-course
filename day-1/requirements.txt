@@ -1,0 +1,9 @@
+# ==============================================================================
+# Python Dependencies for Personal Agent Twin
+# ==============================================================================
+# Install these with: pip install -r requirements.txt
+
+crewai>=0.86.0
+python-dotenv>=1.0.0
+
+

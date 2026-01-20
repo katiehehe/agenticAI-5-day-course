@@ -1,0 +1,12 @@
+# ==============================================================================
+# Environment Variables - Day 4: Multi-Agent Coordination
+# ==============================================================================
+
+# OpenAI API Key (required)
+OPENAI_API_KEY=your-api-key-here
+
+# External Agent URLs (for A2A communication)
+# AGENT_1_URL=https://team1-agent.render.com
+# AGENT_2_URL=https://team2-agent.render.com
+# AGENT_3_URL=https://team3-agent.render.com
+

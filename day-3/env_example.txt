@@ -1,0 +1,16 @@
+# ==============================================================================
+# Environment Variables - Day 3: Deployment
+# ==============================================================================
+
+# OpenAI API Key (required)
+OPENAI_API_KEY=your-api-key-here
+
+# Optional: Other API keys from Day 2
+SPOTIFY_CLIENT_ID=your-spotify-client-id
+SPOTIFY_CLIENT_SECRET=your-spotify-client-secret
+BRAVE_API_KEY=your-brave-api-key
+
+# Production settings
+# PORT=8000  # Usually set by hosting provider
+# ENVIRONMENT=production
+

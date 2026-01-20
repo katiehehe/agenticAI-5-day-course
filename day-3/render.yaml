@@ -1,0 +1,37 @@
+# ==============================================================================
+# Render Deployment Configuration
+# ==============================================================================
+# This file tells Render how to deploy your agent API
+# 
+# Usage:
+# 1. Push this to GitHub
+# 2. Connect repository to Render
+# 3. Render will automatically deploy using this config
+# ==============================================================================
+
+services:
+  - type: web
+    name: personal-agent-twin-api
+    env: python
+    region: oregon  # or your preferred region
+    plan: free      # or starter/standard for production
+    
+    # Build command
+    buildCommand: pip install -r requirements.txt
+    
+    # Start command
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    
+    # Environment variables (add via Render dashboard)
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false  # Set manually in dashboard
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    
+    # Health check
+    healthCheckPath: /health
+    
+    # Auto-deploy on push to main
+    autoDeploy: true
+

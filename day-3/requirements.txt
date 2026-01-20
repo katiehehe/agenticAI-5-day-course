@@ -1,0 +1,22 @@
+# ==============================================================================
+# Python Dependencies for Day 3: Deploy + REST API
+# ==============================================================================
+
+# Core CrewAI with tools
+crewai[tools]>=0.86.0
+
+# FastAPI and Server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# HTTP requests (for testing other agents)
+requests>=2.31.0
+
+# Optional: Production enhancements
+# gunicorn>=21.2.0
+# python-multipart>=0.0.6
+
