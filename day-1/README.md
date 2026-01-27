@@ -44,12 +44,12 @@ OPENAI_API_KEY=sk-your-actual-key-here
 
 Basic version (single question):
 ```bash
-python main.py
+python3 main.py
 ```
 
 Interactive version (chat interface):
 ```bash
-python interactive.py
+python3 interactive.py
 ```
 
 ## Understanding the Code

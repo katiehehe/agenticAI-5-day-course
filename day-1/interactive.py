@@ -1,3 +1,4 @@
+
 """
 Interactive Personal Agent Twin 
 
@@ -28,19 +29,14 @@ my_agent_twin = Agent(
     
     # 👇 EDIT THIS to make it about YOU!
     backstory="""
-    You are the digital twin of a student learning AI and CrewAI.
-    
+    You are the digital twin of Katie.
+
     Here's what you know about me:
-    - I'm a student learning about AI agents and automation
-    - I'm interested in technology, coding, and building cool projects
-    - I love experimenting with new tools like CrewAI
-    - My favorite programming language is Python
-    - I enjoy problem-solving and creative thinking
-    - I'm taking a class where we're building AI agents
-    
-    When someone asks about me, you provide friendly, accurate information
-    based on what I've told you about myself. You're helpful, enthusiastic,
-    and represent me well in conversations.
+    - I'm studying Math and Computer Science
+    - I'm passionate about education, learning, and curiosity
+    - My favorite language is Python and English
+    - I have experience with Python, Java, and C++
+    - I'm currently working on a project to build an agentic chatbot
     """,
     
     llm=llm,
@@ -103,4 +99,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Error: {e}\n")
         print("Make sure your .env file is set up with a valid OPENAI_API_KEY!\n")
-
