@@ -30,6 +30,12 @@ import os
 
 load_dotenv()
 
+# Set CrewAI storage to local directory to avoid macOS permission issues
+# This creates a 'memory' directory in the current project folder
+memory_dir = os.path.join(os.getcwd(), 'memory')
+os.environ['CREWAI_STORAGE_DIR'] = memory_dir
+os.makedirs(memory_dir, exist_ok=True)
+
 # ==============================================================================
 # STEP 1: Configure your LLM (same as Day 1)
 # ==============================================================================
@@ -53,16 +59,41 @@ file_tool = FileReadTool()
 
 # Tool 3: Website Search (RAG-based)
 # Searches and extracts content from websites
-web_rag_tool = WebsiteSearchTool()
+# Note: May fail on macOS due to ChromaDB permission issues
+web_rag_tool = None
+try:
+    web_rag_tool = WebsiteSearchTool()
+except PermissionError as e:
+    print(f"Warning: WebsiteSearchTool initialization failed (permission error): {e}")
+    print("This tool will be skipped. If you need it, check macOS Full Disk Access settings.")
+except Exception as e:
+    print(f"Warning: WebsiteSearchTool initialization failed: {e}")
+    print("This tool will be skipped.")
 
 # Tool 4: YouTube Video Search (RAG-based)
 # Searches within video transcripts
-# Note: May not work due to YouTube API limitations
-youtube_video_tool = YoutubeVideoSearchTool()
+# Note: May not work due to YouTube API limitations or ChromaDB permission issues
+youtube_video_tool = None
+try:
+    youtube_video_tool = YoutubeVideoSearchTool()
+except PermissionError as e:
+    print(f"Warning: YoutubeVideoSearchTool initialization failed (permission error): {e}")
+    print("This tool will be skipped. If you need it, check macOS Full Disk Access settings.")
+except Exception as e:
+    print(f"Warning: YoutubeVideoSearchTool initialization failed: {e}")
+    print("This tool will be skipped.")
 
 # Tool 5: YouTube Channel Search (RAG-based)
 # Searches within YouTube channel content
-youtube_channel_tool = YoutubeChannelSearchTool()
+youtube_channel_tool = None
+try:
+    youtube_channel_tool = YoutubeChannelSearchTool()
+except PermissionError as e:
+    print(f"Warning: YoutubeChannelSearchTool initialization failed (permission error): {e}")
+    print("This tool will be skipped. If you need it, check macOS Full Disk Access settings.")
+except Exception as e:
+    print(f"Warning: YoutubeChannelSearchTool initialization failed: {e}")
+    print("This tool will be skipped.")
 
 # Tool 6: DALL-E Tool
 # Generates images using DALL-E API (uses your OPENAI_API_KEY)
@@ -77,8 +108,17 @@ vision_tool = VisionTool()
 # Requires BROWSERBASE_API_KEY and BROWSERBASE_PROJECT_ID in .env
 # Get keys at: https://www.browserbase.com
 browserbase_tool = None
-if os.getenv('BROWSERBASE_API_KEY') and os.getenv('BROWSERBASE_PROJECT_ID'):
-    browserbase_tool = BrowserbaseLoadTool()
+browserbase_api_key = os.getenv('BROWSERBASE_API_KEY')
+browserbase_project_id = os.getenv('BROWSERBASE_PROJECT_ID')
+if browserbase_api_key and browserbase_project_id:
+    try:
+        browserbase_tool = BrowserbaseLoadTool(
+            api_key=browserbase_api_key,
+            project_id=browserbase_project_id
+        )
+    except Exception as e:
+        print(f"Warning: BrowserbaseLoadTool initialization failed: {e}")
+        print("This tool will be skipped. Install browserbase package if needed: pip install browserbase")
 
 # Tool 9: Web Search (requires SERPER_API_KEY in .env)
 # Get free key at: https://serper.dev
@@ -113,17 +153,22 @@ calculator_tool = CalculatorTool()
 # STEP 4: Create Agent with Memory and Tools
 # ==============================================================================
 
-# Collect available tools
+# Collect available tools (only add tools that initialized successfully)
 available_tools = [
     docs_tool,
     file_tool,
-    web_rag_tool,
-    youtube_video_tool,
-    youtube_channel_tool,
     dalle_tool,
     vision_tool,
     calculator_tool
 ]
+
+# Add RAG tools if they initialized successfully
+if web_rag_tool:
+    available_tools.append(web_rag_tool)
+if youtube_video_tool:
+    available_tools.append(youtube_video_tool)
+if youtube_channel_tool:
+    available_tools.append(youtube_channel_tool)
 
 # Add optional tools if API keys are configured
 if search_tool:
