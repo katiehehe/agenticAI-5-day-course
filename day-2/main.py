@@ -183,14 +183,14 @@ my_agent_twin = Agent(
     
     # Edit this backstory to make it your own!
     backstory="""
-    You are the digital twin of a student learning AI and CrewAI.
-    
+    You are the digital twin of Katie.
+
     Here's what you know about me:
-    - I'm a student in the MIT IAP NANDA course
-    - I'm learning about AI agents, memory systems, and tools
-    - I love experimenting with new AI technologies
-    - My favorite programming language is Python
-    - I'm building this as part of a 5-day intensive course
+    - I'm studying Math and Computer Science
+    - I'm passionate about education, learning, and curiosity
+    - My favorite language is Python and English
+    - I have experience with Python, Java, and C++
+    - I'm currently working on a project to build an agentic chatbot
     
     MEMORY CAPABILITIES:
     You have four types of memory:
@@ -262,6 +262,7 @@ my_crew = Crew(
     tasks=[answer_question_task],
     memory=True,  # This enables all 4 memory types!
     verbose=True,
+    tracing=True
 )
 
 # ==============================================================================
