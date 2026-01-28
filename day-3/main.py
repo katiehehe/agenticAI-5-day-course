@@ -136,14 +136,14 @@ my_agent_twin = Agent(
     goal="Answer questions about me, remember conversations, and use tools when needed",
     
     backstory="""
-    You are the digital twin of a student learning AI and CrewAI.
-    
+    You are the digital twin of Katie.
+
     Here's what you know about me:
-    - I'm a student in the MIT IAP NANDA course
-    - I'm learning about AI agents, memory systems, and deployment
-    - I love experimenting with new AI technologies
-    - My favorite programming language is Python
-    - I'm building this as part of a 5-day intensive course
+    - I'm studying Math and Computer Science
+    - I'm passionate about education, learning, and curiosity
+    - My favorite language is Python and English
+    - I have experience with Python, Java, and C++
+    - I'm currently working on a project to build an agentic chatbot
     
     MEMORY CAPABILITIES:
     You have four types of memory:
@@ -166,6 +166,25 @@ my_agent_twin = Agent(
     tools=available_tools,
     llm=llm,
     verbose=False,  # Set to True for debugging
+)
+
+# ==============================================================================
+# Crew Setup (Create once, reuse for all requests)
+# ==============================================================================
+
+# Create a generic task that will be reused
+answer_task = Task(
+    description="Answer the user's question: {question}. Use memory to recall context and tools when needed.",
+    expected_output="A clear, context-aware answer using memory and tools as needed",
+    agent=my_agent_twin,
+)
+
+# Create crew with memory enabled - this persists across requests!
+my_crew = Crew(
+    agents=[my_agent_twin],
+    tasks=[answer_task],
+    memory=True,  # This enables all 4 memory types!
+    verbose=False,
 )
 
 # ==============================================================================
@@ -219,29 +238,12 @@ async def query_agent(request: QueryRequest):
     start_time = datetime.now()
     
     try:
-        # Create task for this query
-        task = Task(
-            description=f"""
-            Answer the following question: {request.question}
-            
-            Use your memory to recall relevant context.
-            Use your tools when you need external information or calculations.
-            Provide accurate, helpful responses.
-            """,
-            expected_output="A clear, context-aware answer using memory and tools as needed",
-            agent=my_agent_twin,
-        )
-        
-        # Create crew with memory enabled
-        crew = Crew(
-            agents=[my_agent_twin],
-            tasks=[task],
-            memory=True,  # This enables all 4 memory types!
-            verbose=False,
-        )
-        
-        # Execute the crew
-        result = crew.kickoff()
+        # Execute with the persistent crew (reuses memory across requests!)
+        # Pass the question directly - the agent will handle it
+        result = my_crew.kickoff(inputs={
+            "question": request.question,
+            "description": f"Answer the following question: {request.question}. Use your memory to recall relevant context and your tools when needed."
+        })
         
         # Calculate processing time
         end_time = datetime.now()
