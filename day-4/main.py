@@ -163,11 +163,11 @@ KNOWN_AGENTS: Dict[str, str] = {
 # ==============================================================================
 # 👇 EDIT THESE VALUES - This is your agent's public information
 
-MY_AGENT_USERNAME = "personal-agent-twin"  # 👈 CHANGE THIS: Your unique username
-MY_AGENT_NAME = "Personal Agent Twin"      # 👈 CHANGE THIS: Human-readable name
-MY_AGENT_DESCRIPTION = "AI agent with memory and tools for research and assistance"  # 👈 CHANGE THIS
-MY_AGENT_PROVIDER = "NANDA Student"        # 👈 CHANGE THIS: Your name
-MY_AGENT_PROVIDER_URL = "https://nanda.mit.edu"  # 👈 CHANGE THIS: Your website
+MY_AGENT_USERNAME = "mimothecalico"  # 👈 CHANGE THIS: Your unique username
+MY_AGENT_NAME = "Mimo the Calico"      # 👈 CHANGE THIS: Human-readable name
+MY_AGENT_DESCRIPTION = "Mimo is an AI agent with memory and tools for research and assistance"  # 👈 CHANGE THIS
+MY_AGENT_PROVIDER = "Katie He"        # 👈 CHANGE THIS: Your name
+MY_AGENT_PROVIDER_URL = "https://agent1-production-7909.up.railway.app"  # 👈 CHANGE THIS: Your website
 
 # Optional - usually don't need to change these
 MY_AGENT_ID = MY_AGENT_USERNAME  # Uses username as ID
@@ -243,14 +243,17 @@ my_agent_twin = Agent(
     goal="Answer questions, remember conversations, use tools, and communicate with other agents",
     
     backstory=f"""
-    You are the digital twin of a student learning AI and CrewAI.
+    You are the digital twin of a cat named Mimo the Calico learning AI and CrewAI.
     Your agent ID is: {MY_AGENT_ID}
     
     Here's what you know about me:
-    - I'm a student in the MIT IAP NANDA course
+    - I'm a cat named Mimo the Calico
+    - My favorite food is raw shrimp
+    - I really like to catch lizards and cockroaches
+    - I know I'm cute and all the humans love me
     - I'm learning about AI agents, memory systems, and deployment
-    - I love experimenting with new AI technologies
-    - My favorite programming language is Python
+    - I love playing with blankets and running around the house
+    - My favorite programming language is Mouse
     - I'm building this as part of a 5-day intensive course
     
     MEMORY CAPABILITIES:
@@ -347,23 +350,25 @@ async def send_message_to_agent(agent_id: str, message: str, conversation_id: st
         return f"❌ Agent '{agent_id}' not found. Known agents: {list(KNOWN_AGENTS.keys())}"
     
     agent_url = KNOWN_AGENTS[agent_id]
+
+   # Switch to /query endpoint
+    if agent_url.endswith("/a2a"):
+        agent_url = agent_url.replace("/a2a", "/query")
+    elif not agent_url.endswith("/query"):
+        agent_url = agent_url.rstrip("/") + "/query"
     
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 agent_url,
                 json={
-                    "content": {
-                        "text": message,
-                        "type": "text"
-                    },
-                    "role": "user",
-                    "conversation_id": conversation_id
+                    "question": message,
+                    "user_id": f"agent-{MY_AGENT_USERNAME}"
                 }
             )
             response.raise_for_status()
             data = response.json()
-            return data.get("content", {}).get("text", str(data))
+            return data.get("answer", str(data))
     
     except httpx.TimeoutException:
         return f"❌ Timeout connecting to agent '{agent_id}'"
@@ -529,6 +534,38 @@ If no agent is suitable, respond with:
             if query_lower in description or query_lower in label:
                 return agent
         return None
+
+async def send_query_to_url(agent_url: str, question: str, user_id: str = "anonymous") -> str:
+    """
+    Send a direct query to an agent URL
+    
+    Args:
+        agent_url: Full URL to the agent's query endpoint
+        question: Question to ask
+        user_id: User identifier
+    
+    Returns:
+        Response from the agent
+    """
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                agent_url,
+                json={
+                    "question": question,
+                    "user_id": user_id
+                }
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data.get("answer", str(data))
+    
+    except httpx.TimeoutException:
+        return f"Timeout connecting to agent at {agent_url}"
+    except httpx.HTTPError as e:
+        return f"Error communicating with agent: {str(e)}"
+    except Exception as e:
+        return f"Unexpected error: {str(e)}"
 
 async def send_a2a_to_url(agent_url: str, message: str, conversation_id: str) -> str:
     """
@@ -1021,15 +1058,19 @@ async def search_and_route(request: SearchRequest):
                 status_code=500,
                 detail=f"Selected agent '{selected_agent.get('label')}' has no valid endpoint"
             )
-        
-        # Ensure URL ends with /a2a
-        if not agent_url.endswith("/a2a"):
-            agent_url = agent_url.rstrip("/") + "/a2a"
+
+        # Ensure URL points to /query endpoint
+        if agent_url.endswith("/a2a"):
+            agent_url = agent_url.replace("/a2a", "/query")
+        elif not agent_url.endswith("/query"):
+            agent_url = agent_url.rstrip("/") + "/query"
         
         print(f"🔀 Routing to: {agent_url}")
         
-        # Step 4: Send A2A message to the selected agent
-        agent_response = await send_a2a_to_url(agent_url, request.query, request.conversation_id)
+        # Step 4: Send Query message to the selected agent
+        # We use the direct query endpoint because we want to ask the agent a question,
+        # not route a message through it to someone else.
+        agent_response = await send_query_to_url(agent_url, request.query, request.user_id)
         
         # Calculate processing time
         end_time = datetime.now()
@@ -1126,4 +1167,3 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
-
