@@ -1,5 +1,5 @@
 # ==============================================================================
-# Day 4: Agent-to-Agent Communication (A2A)
+# Day 4: Agent-to-Agent Communication (A2A) - ENHANCED EDITION
 # ==============================================================================
 
 # Core CrewAI with tools and memory support
@@ -33,3 +33,8 @@ chromadb>=0.4.0
 # Common dependencies
 aiohttp>=3.9.0                     # Async HTTP for A2A
 
+# For MathSolverTool - Advanced symbolic mathematics
+sympy>=1.13.0
+
+# For PDF tool
+PyPDF2==3.0.1
